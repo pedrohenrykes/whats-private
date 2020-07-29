@@ -1,29 +1,55 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { 
+  Text, 
+  View, 
+  StyleSheet, 
+  TextInput, 
+  TouchableOpacity,
+  Keyboard, 
+  TouchableWithoutFeedback, 
+  Linking 
+} from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 function HelloWorldApp ({ navigation }) {
 
   const [chatNumber, setChatNumber] = useState(null);
+  const whatsappApi = 'https://api.whatsapp.com/send?phone=';
+
+  async function handleGoToWhatsapp()
+  {
+    const countryCode = '55'; // Brasil
+    
+    await Linking.openURL(whatsappApi + countryCode + chatNumber);
+
+    setChatNumber('');
+  }
   
   return (
-    <View style={styles.container}>
-      <FontAwesome5 style={styles.icon} name="whatsapp" size={90} color="green"></FontAwesome5>
-      <TextInput 
-        style={styles.numberInput} 
-        placeholder="Número do WhatsApp"
-        placeholderTextColor="#999"
-        autoCorrect={false}
-        value={chatNumber}
-        onChangeText={setChatNumber}
-      />
-      <TouchableOpacity 
-        style={styles.submitButton} 
-        onPress={() => navigation.navigate('RecentNumbers')}
-      >
-          <Text style={styles.buttonLabel}>Iniciar conversa</Text>
-      </TouchableOpacity>
-    </View>
+    <>
+      <TouchableWithoutFeedback onPress={ () => { Keyboard.dismiss() } }>
+        <View style={styles.container}>
+          <FontAwesome5 style={styles.icon} name="whatsapp" size={90} color="green"></FontAwesome5>
+          <TextInput 
+            style={styles.numberInput} 
+            placeholder="WhatsApp (DDD + Número)"
+            placeholderTextColor="#999"
+            keyboardType="number-pad"
+            dataDetectorTypes="phoneNumber"
+            textContentType="telephoneNumber"
+            autoCorrect={false}
+            value={chatNumber}
+            onChangeText={setChatNumber}
+          />
+          <TouchableOpacity 
+            style={styles.submitButton} 
+            onPress={() => handleGoToWhatsapp()}
+          >
+              <Text style={styles.buttonLabel}>Iniciar conversa</Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableWithoutFeedback>
+    </>
   );
 
 }
