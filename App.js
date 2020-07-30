@@ -14,8 +14,36 @@ export default function App() {
       <StatusBar barStyle="light-content" backgroundColor="#7d40e7"/>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Main" component={Main} />
-          <Stack.Screen name="RecentNumbers" component={RecentNumbers} />
+          <Stack.Screen 
+            name="Main" 
+            component={Main}
+            options={{ 
+              title: 'Wassc',
+              headerStyle: {
+                backgroundColor: 'green',
+              },
+              headerBackTitle: false,
+              headerTintColor: '#fff',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              }
+            }} 
+          />
+          <Stack.Screen 
+            name="RecentNumbers" 
+            component={RecentNumbers} 
+            options={{ 
+              title: 'Números recentes',
+              headerStyle: {
+                backgroundColor: 'green',
+              },
+              headerBackTitle: false,
+              headerTintColor: '#fff',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              }
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </>

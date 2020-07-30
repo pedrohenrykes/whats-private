@@ -7,31 +7,65 @@ import {
   TouchableOpacity,
   Keyboard, 
   TouchableWithoutFeedback, 
-  Linking 
+  Linking,
+  Modal
 } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import CountryPicker from '../components/CountryPicker';
 
-function HelloWorldApp ({ navigation }) {
-
-  const [chatNumber, setChatNumber] = useState(null);
+function Main ({ navigation }) 
+{
   const whatsappApi = 'https://api.whatsapp.com/send?phone=';
+
+  const [countryCode, setCountryCode] = useState(null);
+  const [countryName, setCountryName] = useState(null);
+  const [chatNumber, setChatNumber] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   async function handleGoToWhatsapp()
   {
-    const countryCode = '55'; // Brasil
-    
-    await Linking.openURL(whatsappApi + countryCode + chatNumber);
+    const startChatUrl = whatsappApi + countryCode + chatNumber;
+
+    await Linking.openURL(startChatUrl);
 
     setChatNumber('');
+  }
+
+  function handleSetCountry (code, name)
+  {
+    setCountryCode(code);
+    setCountryName(name);
   }
   
   return (
     <>
-      <TouchableWithoutFeedback onPress={ () => { Keyboard.dismiss() } }>
+      <TouchableWithoutFeedback 
+        onPress={() => { Keyboard.dismiss() }}
+      >
         <View style={styles.container}>
-          <FontAwesome5 style={styles.icon} name="whatsapp" size={90} color="green"></FontAwesome5>
+          <FontAwesome5 style={[styles.componentsSpacement, styles.icon]} name="whatsapp" size={90} color="green"></FontAwesome5>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+          >
+            <TouchableWithoutFeedback 
+              onPress={() => { setModalVisible(! modalVisible); }}
+            >
+              <View style={styles.modalShadow} />
+            </TouchableWithoutFeedback>
+            <CountryPicker setCountry={handleSetCountry}/>
+          </Modal>
+          <TouchableOpacity
+            style={[styles.componentsSpacement, styles.modalOpenButton]}
+            onPress={() => { setModalVisible(true); }}
+          >
+            <Text style={styles.buttonLabel}>
+              {countryName ? countryName : 'Toque para selecionar o país'}
+            </Text>
+          </TouchableOpacity>
           <TextInput 
-            style={styles.numberInput} 
+            style={[styles.componentsSpacement, styles.numberInput]} 
             placeholder="WhatsApp (DDD + Número)"
             placeholderTextColor="#999"
             keyboardType="number-pad"
@@ -42,11 +76,14 @@ function HelloWorldApp ({ navigation }) {
             onChangeText={setChatNumber}
           />
           <TouchableOpacity 
-            style={styles.submitButton} 
+            style={[styles.componentsSpacement, styles.submitButton]} 
             onPress={() => handleGoToWhatsapp()}
           >
               <Text style={styles.buttonLabel}>Iniciar conversa</Text>
           </TouchableOpacity>
+          <Text style={[styles.componentsSpacement, styles.explainText]}>
+            Inicie conversas em seu WhatsApp, sem a necessidade de adicionar os números aos contatos.
+          </Text>
         </View>
       </TouchableWithoutFeedback>
     </>
@@ -56,21 +93,31 @@ function HelloWorldApp ({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, 
-    alignItems: 'center', 
-    justifyContent: 'center'
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'stretch', 
+    position: 'absolute',
+    top: 60,
+    left: 30,
+    right: 30,
+  },
+  componentsSpacement: {
+    marginBottom: 45,
+  },
+  explainText: {
+    alignSelf: 'center',
+    color: '#333',
+    fontSize: 17,
   },
   icon: {
-    marginBottom: 30,
+    alignSelf: 'center',
   },
   numberInput: {
     height: 55,
-    width: 310,
     color: '#333',
     backgroundColor: '#fff',
     borderRadius: 12,
-    marginBottom: 40,
-    paddingHorizontal: 28,
     fontSize: 18,
     textAlign: 'center',
     shadowColor: '#000',
@@ -82,17 +129,36 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   submitButton: {
-    width: 150,
     height: 55,
-    backgroundColor: "#8e4dff",
+    backgroundColor: "green",
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: {
+        width: 4,
+        height: 4,
+    },
+    elevation: 2,
+  },
+  buttonLabel: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  modalShadow: {
+    flex: 1,
+    //backgroundColor: "#383838",
+    opacity: 0.7,
+  },
+  modalOpenButton: {
+    height: 55,
+    backgroundColor: "#c0c0c0",
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  buttonLabel: {
-    color: '#fff',
-    fontSize: 18
-  }
 });
 
-export default HelloWorldApp;
+export default Main;
