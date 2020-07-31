@@ -12,29 +12,36 @@ import {
 } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import CountryPicker from '../components/CountryPicker';
+import { TextInputMask } from 'react-native-masked-text'
 
 function Main ({ navigation }) 
 {
   const whatsappApi = 'https://api.whatsapp.com/send?phone=';
 
-  const [countryCode, setCountryCode] = useState(null);
-  const [countryName, setCountryName] = useState(null);
-  const [chatNumber, setChatNumber] = useState(null);
+  const [country, setCountry] = useState({});
+  const [phoneNumber, setPhoneNumber] = useState(null);
+  const [maskedPhoneNumber, setMaskedPhoneNumber] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   async function handleGoToWhatsapp()
   {
-    const startChatUrl = whatsappApi + countryCode + chatNumber;
+    const startChatUrl = whatsappApi + country.code + phoneNumber;
 
     await Linking.openURL(startChatUrl);
 
-    setChatNumber('');
+    setPhoneNumber('');
   }
 
-  function handleSetCountry (code, name)
+  function handleSetCountry (country)
   {
-    setCountryCode(code);
-    setCountryName(name);
+    setCountry(country);
+  }
+
+  function handleSetPhoneNumber (component)
+  {
+    const number = (component ? component.getRawValue() : null);
+
+    setPhoneNumber(number);
   }
   
   return (
@@ -61,20 +68,29 @@ function Main ({ navigation })
             onPress={() => { setModalVisible(true); }}
           >
             <Text style={styles.buttonLabel}>
-              {countryName ? countryName : 'Toque para selecionar o país'}
+              {country.name ? country.name : 'Toque para selecionar o país'}
             </Text>
           </TouchableOpacity>
-          <TextInput 
-            style={[styles.componentsSpacement, styles.numberInput]} 
+
+          <TextInputMask 
+            style={[styles.componentsSpacement, styles.numberInput]}
             placeholder="WhatsApp (DDD + Número)"
             placeholderTextColor="#999"
             keyboardType="number-pad"
             dataDetectorTypes="phoneNumber"
             textContentType="telephoneNumber"
             autoCorrect={false}
-            value={chatNumber}
-            onChangeText={setChatNumber}
+            type={'cel-phone'}
+            options={{
+              maskType: 'BRL',
+              withDDD: true,
+              dddMask: '(99) '
+            }}
+            value={maskedPhoneNumber}
+            onChangeText={setMaskedPhoneNumber}
+            ref={handleSetPhoneNumber}
           />
+
           <TouchableOpacity 
             style={[styles.componentsSpacement, styles.submitButton]} 
             onPress={() => handleGoToWhatsapp()}

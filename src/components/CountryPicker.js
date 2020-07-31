@@ -48,9 +48,9 @@ function CountryPicker ({ setCountry })
 
         if (code === selectedCode) {
 
-          const name = country.nativeName + " (+" + code + ")";
+          const name = country.name + " (+" + code + ")";
 
-          setCountry(code, name);
+          setCountry({ code, name });
 
         }
 
@@ -70,7 +70,7 @@ function CountryPicker ({ setCountry })
         const callingCodes = country.callingCodes;
 
         return callingCodes.map(code => (
-          <Picker.Item label={country.nativeName + ' (+' + code + ')'} value={code} />
+          <Picker.Item label={country.name + ' (+' + code + ')'} value={code} />
         ));
 
       })}
