@@ -1,80 +1,67 @@
 import React, { useState, useEffect } from 'react';
 import { Picker, StyleSheet, Alert } from 'react-native';
 import countriesApi from '../services/CountriesApi';
+import RNPickerSelect from 'react-native-picker-select';
 
-function CountryPicker ({ setCountry })
+function CountryPicker ({ setCountryCode })
 {
-  const [selectedCountry, setSelectedCountry] = useState('ruby');
   const [countries, setCountries] = useState([]);
+  const [pickerItems, setPickerItems] = useState([]);
 
   useEffect(() => {
 
     async function loadCountries()
     {
-      try {
+      const response = await countriesApi.get('/all');
 
-        const response = await countriesApi.get('/all');
+      // TODO: countries não está sendo preenchida no state
+      setCountries(response.data);
 
-        setCountries(response.data);
-
-      } catch (error) {
-          
-        alertMessages("Falha na conexão", "Não foi possível conectar ao servidor de dados.", [
-            { text: "Recarregar", onPress: () => setCountries() },
-            { text: "Cancelar", onPress: () => console.log(error), style: "cancel" }
-        ], false);
-
-      }
+      fillPicker();
     }
 
     loadCountries();
 
   }, []);
 
-  async function alertMessages(title, message, buttons, cancelable)
+  async function fillPicker()
   {
-    Alert.alert(title, message, buttons, { cancelable: cancelable });
-  }
-
-  async function handleSetCountry(selectedCode)
-  {
-    setSelectedCountry(selectedCode);
+    let pickerCountries = [];
 
     countries.map(country => {
 
-      const callingCodes = country.callingCodes;
+      let callingCodes = country.callingCodes;
 
       callingCodes.map(code => {
 
-        if (code === selectedCode) {
+        if (code != "") {
 
-          const name = country.name + " (+" + code + ")";
+          let name = country.name + " (+" + code + ")";
 
-          setCountry({ code, name });
+          let pickerCountry = { label: name, value: code };
+
+          pickerCountries = [...pickerCountries, pickerCountry];
 
         }
 
       });
 
     });
+
+    setPickerItems(pickerCountries);
+  }
+
+  async function alertMessages(title, message, buttons, cancelable)
+  {
+    Alert.alert(title, message, buttons, { cancelable: cancelable });
   }
 
   return (
-    <Picker
+    <RNPickerSelect
       style={styles.countryInput}
-      selectedValue={selectedCountry}
-      onValueChange={(itemValue) => handleSetCountry(itemValue)}
-    >
-      {countries.map(country => {
-
-        const callingCodes = country.callingCodes;
-
-        return callingCodes.map(code => (
-          <Picker.Item label={country.name + ' (+' + code + ')'} value={code} />
-        ));
-
-      })}
-    </Picker>
+      onValueChange={(value) => setCountryCode(value)}
+      items={pickerItems}
+    />
   );
 }
 

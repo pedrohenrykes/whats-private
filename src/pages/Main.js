@@ -18,26 +18,25 @@ function Main ({ navigation })
 {
   const whatsappApi = 'https://api.whatsapp.com/send?phone=';
 
-  const [country, setCountry] = useState({});
+  const [countryCode, setCountryCode] = useState({});
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [maskedPhoneNumber, setMaskedPhoneNumber] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
 
   async function handleGoToWhatsapp()
   {
-    const startChatUrl = whatsappApi + country.code + phoneNumber;
+    const startChatUrl = whatsappApi + countryCode + phoneNumber;
 
     await Linking.openURL(startChatUrl);
 
     setPhoneNumber('');
   }
 
-  function handleSetCountry (country)
+  function handleSetCountryCode(code)
   {
-    setCountry(country);
+    setCountryCode(code);
   }
 
-  function handleSetPhoneNumber (component)
+  function handleSetPhoneNumber(component)
   {
     const number = (component ? component.getRawValue() : null);
 
@@ -51,26 +50,8 @@ function Main ({ navigation })
       >
         <View style={styles.container}>
           <FontAwesome5 style={[styles.componentsSpacement, styles.icon]} name="whatsapp" size={90} color="green"></FontAwesome5>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-          >
-            <TouchableWithoutFeedback 
-              onPress={() => { setModalVisible(! modalVisible); }}
-            >
-              <View style={styles.modalShadow} />
-            </TouchableWithoutFeedback>
-            <CountryPicker setCountry={handleSetCountry}/>
-          </Modal>
-          <TouchableOpacity
-            style={[styles.componentsSpacement, styles.modalOpenButton]}
-            onPress={() => { setModalVisible(true); }}
-          >
-            <Text style={styles.buttonLabel}>
-              {country.name ? country.name : 'Toque para selecionar o país'}
-            </Text>
-          </TouchableOpacity>
+          
+          <CountryPicker setCountryCode={handleSetCountryCode}/>
 
           <TextInputMask 
             style={[styles.componentsSpacement, styles.numberInput]}

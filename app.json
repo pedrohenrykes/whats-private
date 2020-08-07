@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "wassc",
-    "slug": "wassc",
+    "name": "WhatsPrivate",
+    "slug": "whatsprivate",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,7 +17,13 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "br.com.aguimesoft.whatsprivate",
+      "buildNumber": "1.0.0",
       "supportsTablet": true
+    },
+    "android": {
+      "package": "br.com.aguimesoft.whatsprivate",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
