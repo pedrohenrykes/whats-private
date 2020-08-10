@@ -6,39 +6,42 @@ import {
   TouchableOpacity,
   Keyboard, 
   TouchableWithoutFeedback, 
-  Linking,
 } from 'react-native';
-import { FontAwesome5 } from '@expo/vector-icons';
-import CountryPicker from '../components/CountryPicker';
 import { TextInputMask } from 'react-native-masked-text';
+import { FontAwesome5 } from '@expo/vector-icons';
 import { AdMobBanner } from 'expo-ads-admob';
+
+import CountryPicker from '../components/CountryPicker';
+import AlertMessages from '../components/AlertMessages';
+import WhatsappApi from '../services/WhatsappApi';
 
 function Main ({ navigation }) 
 {
-  const whatsappApi = 'https://api.whatsapp.com/send?phone=';
+  const [countryCode, setCountryCode] = useState(0);
+  const [phoneNumber, setPhoneNumber] = useState(0);
+  const [maskedPhoneNumber, setMaskedPhoneNumber] = useState('');
 
-  const [countryCode, setCountryCode] = useState({});
-  const [phoneNumber, setPhoneNumber] = useState(null);
-  const [maskedPhoneNumber, setMaskedPhoneNumber] = useState(null);
+  const WhatsApp = new WhatsappApi;
+  const Alerts = new AlertMessages;
 
   useEffect(() => {
 
-    async function loadApp()
+    async function setTestDevice()
     {
       // await setTestDeviceIDAsync('EMULATOR');
     }
 
-    loadApp();
+    setTestDevice();
 
   });
 
   async function handleGoToWhatsapp()
   {
-    const startChatUrl = whatsappApi + countryCode + phoneNumber;
-
-    await Linking.openURL(startChatUrl);
-
-    setPhoneNumber('');
+    if (countryCode != 0 && phoneNumber != 0) {
+      await WhatsApp.startChat(countryCode, phoneNumber);
+    } else {
+      Alerts.simpleAlert("Atenção", "Selecione o páis e informe um número de telefone válido.");
+    }
   }
 
   function handleSetCountryCode(code)
@@ -79,7 +82,10 @@ function Main ({ navigation })
           </View>
           
           <View style={styles.componentsSpacement}>
-            <CountryPicker  setCountryCode={handleSetCountryCode} />
+            <CountryPicker 
+              setCountryCode={handleSetCountryCode} 
+              countryCode={countryCode}
+            />
           </View>
 
           <View style={styles.componentsSpacement}>

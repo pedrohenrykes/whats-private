@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Alert } from 'react-native';
-import countriesApi from '../services/CountriesApi';
+import CountriesApi from '../services/CountriesApi';
 import RNPickerSelect from 'react-native-picker-select';
 
-function CountryPicker ({ setCountryCode })
+function CountryPicker ({ setCountryCode, countryCode })
 {
   const [pickerItems, setPickerItems] = useState([]);
 
@@ -11,12 +11,18 @@ function CountryPicker ({ setCountryCode })
 
     async function loadCountries()
     {
-      const response = await countriesApi.get('/all');
+      const response = await CountriesApi.get('/all');
 
       await fillPicker(response.data);
     }
 
+    async function setDefaultCountry(code)
+    {
+      setCountryCode(code);
+    }
+
     loadCountries();
+    setDefaultCountry('55'); // Brasil
 
   }, []);
 
@@ -57,6 +63,7 @@ function CountryPicker ({ setCountryCode })
       }}
       onValueChange={(value) => setCountryCode(value)}
       items={pickerItems}
+      value={countryCode}
     />
   );
 }
