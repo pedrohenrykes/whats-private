@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { AdMobBanner } from 'expo-ads-admob';
+import { AdMobBanner, setTestDeviceIDAsync } from 'expo-ads-admob';
 
 import CountryPicker from '../components/CountryPicker';
 import AlertMessages from '../components/AlertMessages';
@@ -23,17 +23,6 @@ function Main ({ navigation })
 
   const WhatsApp = new WhatsappApi;
   const Alerts = new AlertMessages;
-
-  useEffect(() => {
-
-    async function setTestDevice()
-    {
-      // await setTestDeviceIDAsync('EMULATOR');
-    }
-
-    setTestDevice();
-
-  });
 
   async function handleGoToWhatsapp()
   {
@@ -55,6 +44,11 @@ function Main ({ navigation })
 
     setPhoneNumber(number);
   }
+
+  function handleGetBannerError(error)
+  {
+    console.log(error);
+  }
   
   return (
     <>
@@ -62,13 +56,10 @@ function Main ({ navigation })
         <AdMobBanner
           bannerSize="smartBannerPortrait"
           adUnitID="ca-app-pub-7100133666717639/4135609069"
-          servePersonalizedAds // true or false
-          // onDidFailToReceiveAdWithError={this.bannerError} 
-        />
+          onDidFailToReceiveAdWithError={handleGetBannerError} />
       </View>
       <TouchableWithoutFeedback 
-        onPress={() => { Keyboard.dismiss() }}
-      >
+        onPress={() => { Keyboard.dismiss() }} >
         <View style={styles.container}>
 
           <View style={styles.componentsSpacement}>
@@ -76,16 +67,14 @@ function Main ({ navigation })
               style={styles.icon} 
               name="whatsapp" 
               size={70} 
-              color="green"
-            >
+              color="green" >
             </FontAwesome5>
           </View>
           
           <View style={styles.componentsSpacement}>
             <CountryPicker 
               setCountryCode={handleSetCountryCode} 
-              countryCode={countryCode}
-            />
+              countryCode={countryCode} />
           </View>
 
           <View style={styles.componentsSpacement}>
@@ -105,15 +94,13 @@ function Main ({ navigation })
               }}
               value={maskedPhoneNumber}
               onChangeText={setMaskedPhoneNumber}
-              ref={handleSetPhoneNumber}
-            />
+              ref={handleSetPhoneNumber} />
           </View>
 
           <View style={styles.componentsSpacement}>
             <TouchableOpacity 
               style={styles.submitButton} 
-              onPress={() => handleGoToWhatsapp()}
-            >
+              onPress={() => handleGoToWhatsapp()} >
                 <Text style={styles.buttonLabel}>Iniciar conversa</Text>
             </TouchableOpacity>
           </View>
