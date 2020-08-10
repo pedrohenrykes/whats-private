@@ -23,7 +23,10 @@
     },
     "android": {
       "package": "br.com.aguimesoft.whatsprivate",
-      "versionCode": 1
+      "versionCode": 1,
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-7100133666717639~2724779889"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

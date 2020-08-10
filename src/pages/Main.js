@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Text, 
   View, 
-  StyleSheet, 
-  TextInput, 
+  StyleSheet,
   TouchableOpacity,
   Keyboard, 
   TouchableWithoutFeedback, 
   Linking,
-  Modal
 } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import CountryPicker from '../components/CountryPicker';
-import { TextInputMask } from 'react-native-masked-text'
+import { TextInputMask } from 'react-native-masked-text';
+import { AdMobBanner } from 'expo-ads-admob';
 
 function Main ({ navigation }) 
 {
@@ -21,6 +20,17 @@ function Main ({ navigation })
   const [countryCode, setCountryCode] = useState({});
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [maskedPhoneNumber, setMaskedPhoneNumber] = useState(null);
+
+  useEffect(() => {
+
+    async function loadApp()
+    {
+      // await setTestDeviceIDAsync('EMULATOR');
+    }
+
+    loadApp();
+
+  });
 
   async function handleGoToWhatsapp()
   {
@@ -45,42 +55,69 @@ function Main ({ navigation })
   
   return (
     <>
+      <View style={styles.adsBanner}>
+        <AdMobBanner
+          bannerSize="smartBannerPortrait"
+          adUnitID="ca-app-pub-7100133666717639/4135609069"
+          servePersonalizedAds // true or false
+          // onDidFailToReceiveAdWithError={this.bannerError} 
+        />
+      </View>
       <TouchableWithoutFeedback 
         onPress={() => { Keyboard.dismiss() }}
       >
         <View style={styles.container}>
-          <FontAwesome5 style={[styles.componentsSpacement, styles.icon]} name="whatsapp" size={90} color="green"></FontAwesome5>
+
+          <View style={styles.componentsSpacement}>
+            <FontAwesome5 
+              style={styles.icon} 
+              name="whatsapp" 
+              size={70} 
+              color="green"
+            >
+            </FontAwesome5>
+          </View>
           
-          <CountryPicker setCountryCode={handleSetCountryCode}/>
+          <View style={styles.componentsSpacement}>
+            <CountryPicker  setCountryCode={handleSetCountryCode} />
+          </View>
 
-          <TextInputMask 
-            style={[styles.componentsSpacement, styles.numberInput]}
-            placeholder="WhatsApp (DDD + Número)"
-            placeholderTextColor="#999"
-            keyboardType="number-pad"
-            dataDetectorTypes="phoneNumber"
-            textContentType="telephoneNumber"
-            autoCorrect={false}
-            type={'cel-phone'}
-            options={{
-              maskType: 'BRL',
-              withDDD: true,
-              dddMask: '(99) '
-            }}
-            value={maskedPhoneNumber}
-            onChangeText={setMaskedPhoneNumber}
-            ref={handleSetPhoneNumber}
-          />
+          <View style={styles.componentsSpacement}>
+            <TextInputMask 
+              style={styles.numberInput}
+              placeholder="WhatsApp (DDD + Número)"
+              placeholderTextColor="#999"
+              keyboardType="number-pad"
+              dataDetectorTypes="phoneNumber"
+              textContentType="telephoneNumber"
+              autoCorrect={false}
+              type={'cel-phone'}
+              options={{
+                maskType: 'BRL',
+                withDDD: true,
+                dddMask: '(99) '
+              }}
+              value={maskedPhoneNumber}
+              onChangeText={setMaskedPhoneNumber}
+              ref={handleSetPhoneNumber}
+            />
+          </View>
 
-          <TouchableOpacity 
-            style={[styles.componentsSpacement, styles.submitButton]} 
-            onPress={() => handleGoToWhatsapp()}
-          >
-              <Text style={styles.buttonLabel}>Iniciar conversa</Text>
-          </TouchableOpacity>
-          <Text style={[styles.componentsSpacement, styles.explainText]}>
-            Inicie conversas em seu WhatsApp, sem a necessidade de adicionar os números aos contatos.
-          </Text>
+          <View style={styles.componentsSpacement}>
+            <TouchableOpacity 
+              style={styles.submitButton} 
+              onPress={() => handleGoToWhatsapp()}
+            >
+                <Text style={styles.buttonLabel}>Iniciar conversa</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.componentsSpacement}>
+            <Text style={styles.explainText}>
+              Inicie conversas em seu WhatsApp, sem a necessidade de adicionar os números aos contatos.
+            </Text>
+          </View>
+
         </View>
       </TouchableWithoutFeedback>
     </>
@@ -95,17 +132,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'stretch', 
     position: 'absolute',
-    top: 60,
+    top: 75,
     left: 30,
     right: 30,
   },
   componentsSpacement: {
-    marginBottom: 45,
+    marginBottom: 25,
   },
   explainText: {
     alignSelf: 'center',
     color: '#333',
-    fontSize: 17,
+    fontSize: 15,
   },
   icon: {
     alignSelf: 'center',
@@ -144,11 +181,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  modalShadow: {
-    flex: 1,
-    //backgroundColor: "#383838",
-    opacity: 0.7,
-  },
   modalOpenButton: {
     height: 55,
     backgroundColor: "#c0c0c0",
@@ -156,6 +188,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  adsBanner: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
 
 export default Main;

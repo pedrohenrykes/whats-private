@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Picker, StyleSheet, Alert } from 'react-native';
+import { StyleSheet, Alert } from 'react-native';
 import countriesApi from '../services/CountriesApi';
 import RNPickerSelect from 'react-native-picker-select';
 
 function CountryPicker ({ setCountryCode })
 {
-  const [countries, setCountries] = useState([]);
   const [pickerItems, setPickerItems] = useState([]);
 
   useEffect(() => {
@@ -14,31 +13,28 @@ function CountryPicker ({ setCountryCode })
     {
       const response = await countriesApi.get('/all');
 
-      // TODO: countries não está sendo preenchida no state
-      setCountries(response.data);
-
-      fillPicker();
+      await fillPicker(response.data);
     }
 
     loadCountries();
 
   }, []);
 
-  async function fillPicker()
+  async function fillPicker(countries)
   {
     let pickerCountries = [];
 
     countries.map(country => {
 
-      let callingCodes = country.callingCodes;
+      const callingCodes = country.callingCodes;
 
       callingCodes.map(code => {
 
         if (code != "") {
 
-          let name = country.name + " (+" + code + ")";
+          const name = country.name + " (+" + code + ")";
 
-          let pickerCountry = { label: name, value: code };
+          const pickerCountry = { label: name, value: code };
 
           pickerCountries = [...pickerCountries, pickerCountry];
 
@@ -51,14 +47,14 @@ function CountryPicker ({ setCountryCode })
     setPickerItems(pickerCountries);
   }
 
-  async function alertMessages(title, message, buttons, cancelable)
-  {
-    Alert.alert(title, message, buttons, { cancelable: cancelable });
-  }
-
   return (
     <RNPickerSelect
-      style={styles.countryInput}
+      style={styles}
+      useNativeAndroidPickerStyle={false}
+      placeholder={{
+        label: 'Toque para selecionar o país',
+        value: null
+      }}
       onValueChange={(value) => setCountryCode(value)}
       items={pickerItems}
     />
@@ -66,9 +62,39 @@ function CountryPicker ({ setCountryCode })
 }
 
 const styles = StyleSheet.create({
-  countryInput: {
+  inputIOS: {
+    height: 55,
+    color: '#333',
     backgroundColor: '#fff',
+    borderRadius: 12,
+    fontSize: 18,
+    textAlign: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: {
+        width: 4,
+        height: 4,
+    },
+    elevation: 2,
   },
+  inputAndroid: {
+    height: 55,
+    color: '#333',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    fontSize: 18,
+    textAlign: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: {
+        width: 4,
+        height: 4,
+    },
+    elevation: 2,
+  },
+  placeholder: {
+    color: '#999'
+  }
 });
 
 export default CountryPicker;

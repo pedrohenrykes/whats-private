@@ -18,7 +18,7 @@ export default function App() {
             name="Main" 
             component={Main}
             options={{ 
-              title: 'Wassc',
+              title: 'WhatsPrivate',
               headerStyle: {
                 backgroundColor: 'green',
               },
