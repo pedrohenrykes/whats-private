@@ -52,7 +52,7 @@ function Main ({ navigation })
   
   return (
     <>
-      <View style={styles.adsBanner}>
+      <View style={styles.adsTopBanner}>
         <AdMobBanner
           bannerSize="smartBannerPortrait"
           adUnitID="ca-app-pub-7100133666717639/4135609069"
@@ -113,6 +113,12 @@ function Main ({ navigation })
 
         </View>
       </TouchableWithoutFeedback>
+      <View style={styles.adsBottomBanner}>
+        <AdMobBanner
+          bannerSize="smartBannerPortrait"
+          adUnitID="ca-app-pub-7100133666717639/6523003219"
+          onDidFailToReceiveAdWithError={handleGetBannerError} />
+      </View>
     </>
   );
 
@@ -181,9 +187,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  adsBanner: {
-    justifyContent: 'center',
-    alignItems: 'center',
+  adsTopBanner: {
+    position: 'absolute',
+    top: 0,
+  },
+  adsBottomBanner: {
+    position: 'absolute',
+    bottom: 0,
   }
 });
 
